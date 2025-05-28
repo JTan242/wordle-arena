@@ -1,0 +1,8 @@
+# Node
+node_modules/
+npm-debug.log
+# IDEs
+.vscode/
+.DS_Store
+# React build
+client/build/
