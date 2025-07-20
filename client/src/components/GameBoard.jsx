@@ -10,6 +10,11 @@ const colors = {
   yellow: "bg-yellow-400 text-white border-yellow-600",
   gray: "bg-gray-300 text-gray-900 border-gray-400",
 };
+const keyboardRows = [
+  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+  ["Z", "X", "C", "V", "B", "N", "M"],
+];
 
 // format milliseconds into MM:SS
 function formatMillis(ms) {
@@ -148,6 +153,20 @@ export default function GameBoard() {
     return a.username.localeCompare(b.username);
   });
 
+  function getLetterStatuses(guesses, feedbacks) {
+    const status = {}; // e.g. {A: "gray", P: "yellow", ...}
+    guesses.forEach((guess, i) => {
+      guess.split('').forEach((ch, idx) => {
+        const f = feedbacks[i]?.[idx];
+        if (!f) return;
+        // Update only if it's "better" feedback
+        if (f === "green") status[ch] = "green";
+        else if (f === "yellow" && status[ch] !== "green") status[ch] = "yellow";
+        else if (f === "gray" && !status[ch]) status[ch] = "gray";
+      });
+    });
+    return status;
+  }
   function renderScoreboard() {
     return (
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6 min-w-[350px]">
@@ -222,7 +241,7 @@ export default function GameBoard() {
       </div>
     );
   }
-
+  const letterStatus = getLetterStatuses(guesses, feedbacks);
   return (
     <>
       {/* Scoreboard */}
@@ -242,7 +261,7 @@ export default function GameBoard() {
                   <span className="text-yellow-600">{p.yellows}🟨</span>
                   {p.finished && p.finishedTime && (
                     <span className="ml-2 text-xs text-gray-500">
-                      Done: {formatMillis(p.finishedTime)}
+                      &nbsp;Done: {formatMillis(p.finishedTime)}
                     </span>
                   )}
                 </span>
@@ -291,6 +310,31 @@ export default function GameBoard() {
           })}
         </div>
 
+        <div className="mt-6">
+          {keyboardRows.map((row, rowIdx) => (
+            <div key={rowIdx} className="flex justify-center mb-1">
+              {row.map(letter => {
+                const color =
+                  letterStatus[letter] === "green"
+                    ? "bg-green-500 text-white"
+                    : letterStatus[letter] === "yellow"
+                    ? "bg-yellow-400 text-white"
+                    : letterStatus[letter] === "gray"
+                    ? "bg-gray-300 text-gray-900"
+                    : "bg-white text-gray-900 border";
+                return (
+                  <div
+                    key={letter}
+                    className={`w-10 h-12 m-0.5 flex items-center justify-center rounded font-bold uppercase border-2 ${color}`}
+                  >
+                    {letter}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
         {!gameOver ? (
           <div className="flex gap-2 items-center">
             <input
@@ -327,10 +371,11 @@ export default function GameBoard() {
             Out of guesses! Wait for others to finish.
           </div>
         )}
-        {message && !gameOver && (
+        {notAWord ? (
+          <div className="mt-3 text-red-600">Not a valid word.</div>
+        ) : message && !gameOver ? (
           <div className="mt-3 text-red-500">{message}</div>
-        )}
-        {notAWord && <div className="mt-3 text-red-600">Not a valid word.</div>}
+        ) : null}
 
         {/* Always visible Return to Lobby button */}
         <button
