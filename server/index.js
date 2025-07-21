@@ -22,9 +22,12 @@ app.use(limiter); // Apply to all requests
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
+    origin: [
+      "http://localhost:5173", // Local dev
+      "https://wordle-arena-juicsgmoa-jeremy-tans-projects-790eaca5.vercel.app" // Your Vercel deployment
+    ],
+    methods: ["GET", "POST"]
+  }
 });
 const VALID_WORDS = wordsData["5"].map((w) => w.toUpperCase());
 
