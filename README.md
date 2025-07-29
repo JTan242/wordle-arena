@@ -2,6 +2,9 @@
 
 Wordle Arena is a real-time multiplayer word-guessing game inspired by Wordle. Built with React and Node.js.
 
+Successfully Deployed using Vercel for Frontend and Render for Backend.
+(Not currently deployed because it costs money and I'm cheap)
+
 <img width="1711" height="904" alt="image" src="https://github.com/user-attachments/assets/24b69f84-4075-4eec-a067-70335cec575d" />
 <img src="https://github.com/user-attachments/assets/7e894204-0193-4290-8591-8b9f8f35c75b" alt="worldgif" style="width:200%; max-width:2000px; display:block; margin:auto;" />
 
